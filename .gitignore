@@ -2,3 +2,6 @@
 /Login/migrations
 /DocWise/__pycache__
 /Login/__pycache__
+/.env
+/ChatbotAndClass/migrations
+/ChatbotAndClass/__pycache__

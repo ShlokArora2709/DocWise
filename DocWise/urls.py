@@ -19,6 +19,7 @@ from django.urls import path
 from Login.views import *
 from django.conf import settings
 from django.conf.urls.static import static
+from ChatbotAndClass.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('', home_view, name='home'),
+    path('chatbot/', chatbot, name='chatbot'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
