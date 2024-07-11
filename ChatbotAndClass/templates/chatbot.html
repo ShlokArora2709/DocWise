@@ -10,13 +10,16 @@
     <div class="chatbot-container">
         <h1>Chatbot</h1>
         <div class="conversation-box">
-            <pre>{{ conversation }}</pre>
+            <textarea rows="20" cols="80" readonly>{{ conversation }}</textarea>
         </div>
         <form method="post">
             {% csrf_token %}
             <input type="text" name="userinput" value="{{ userinput }}" placeholder="Type your message..." required>
             <button type="submit">Send</button>
         </form>
+        <br>
+        <br>
+        <a href="/" type="button" class="button">Back</a> 
     </div>
 </body>
 </html>
