@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <h2>Upload Your Report PDF</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file">
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if file_text %}
+        <hr>
+        <h3>Uploaded File Content:</h3>
+        <textarea rows="20" cols="80" readonly>{{ file_text }}</textarea>
+    {% endif %}
+</body>
+</html>

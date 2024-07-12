@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('', home_view, name='home'),
     path('chatbot/', chatbot, name='chatbot'),
+    path('upload_report/', upload_report, name='upload_report'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
