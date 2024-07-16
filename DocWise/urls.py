@@ -29,6 +29,8 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('chatbot/', chatbot, name='chatbot'),
     path('upload_report/', upload_report, name='upload_report'),
+    path('signup/doctor/', doctor_registration_view, name='doctor_registration'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

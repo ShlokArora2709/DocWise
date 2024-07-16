@@ -5,7 +5,6 @@ import os
 import re
 from .froms import UploadFileForm
 from pypdf import PdfReader
-from .models import Report
 from django.contrib.auth.decorators import login_required
 
 
@@ -13,7 +12,6 @@ load_dotenv()
 GenAI.configure(api_key=os.getenv('GEMINI_API_KEY'))
 llm=GenAI.GenerativeModel('gemini-1.5-pro')
 
-os.makedirs('models', exist_ok=True)
 input_text=f'''Generate a summary report of the patient\'s medical report and make a dictionary
  for the things that were checked in the medical report. The report dictionary should have 
  items like RBC, urea, etc., that are mentioned in the report. Your output should be like 
@@ -81,12 +79,6 @@ def upload_report(request):
             dict_report_end = response.rfind("}") + 1
             dict_report = response[dict_report_start:dict_report_end].strip()
             # Save the report to the database
-            Report.objects.create(
-                user=request.user,
-                report=file,
-                summary=summary,
-                dictionary=dict_report
-            )
             os.remove(file.name)
             return redirect('home')
         

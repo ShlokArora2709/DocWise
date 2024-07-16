@@ -3,9 +3,7 @@ from .models import CustomUser, Report
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-
-    def delete_model(self, request, obj):
-        obj.delete()
-
-    def delete_queryset(self, request, queryset):
-        queryset.delete()
+    list_display = ('username', 'summary', 'created_at', 'updated_at')
+    list_filter = ('created_at', 'updated_at')
+    search_fields = ('summary', 'dictionary')
+    date_hierarchy = 'created_at'

@@ -2,7 +2,7 @@ from django.db import models
 from  Login.models import CustomUser
 
 class Report(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,default=CustomUser.objects.first().get_username())
+    username = models.CharField(max_length=150)  
     report = models.FileField()
     summary = models.TextField()
     dictionary = models.TextField()

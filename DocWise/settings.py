@@ -142,3 +142,6 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = 'Login.CustomUser'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
