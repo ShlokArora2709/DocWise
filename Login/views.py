@@ -3,15 +3,20 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 def signup_view(request):
+    error = None
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user,backend='django.contrib.auth.backends.ModelBackend')
             return redirect('home')
+        else:
+            error = form.errors.as_text()
+            print(error)
     else:
         form = CustomUserCreationForm()
-    return render(request, 'signup.html', {'form': form})
+    
+    return render(request, 'signup.html', {'form': form, 'error': error})
 
 def login_view(request):
     if request.method == 'POST':
