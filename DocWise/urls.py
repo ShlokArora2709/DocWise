@@ -30,6 +30,7 @@ urlpatterns = [
     path('chatbot/', chatbot, name='chatbot'),
     path('upload_report/', upload_report, name='upload_report'),
     path('signup/doctor/', doctor_registration_view, name='doctor_registration'),
+    path('search/', search_doctors, name='search_doctors'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

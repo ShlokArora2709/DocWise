@@ -7,6 +7,10 @@ from .froms import UploadFileForm
 from pypdf import PdfReader
 from django.contrib.auth.decorators import login_required
 from simplegmail import Gmail
+from django.http import JsonResponse
+from Login.models import Doctor
+
+
 gmail=Gmail()
 
 load_dotenv()
@@ -31,6 +35,41 @@ input_text=f'''Generate a summary report of the patient\'s medical report and ma
   "Urine Leucocyte Esterase": "Present 1+","Urine Nitrite": "Negative","Urine RBC": "Nil",
   "Urine Pus Cells": "6-8","Urine Epithelial Cells": "1-2","Urine Casts": "Nil",
   "Urine Crystals": "Nil","Urine Others": "Nil"]'''
+
+
+speciality_CHOICES = [
+        ('Cardiology', 'Cardiology'),
+        ('Dermatology', 'Dermatology'),
+        ('Neurology', 'Neurology'),
+        ('Pediatrics', 'Pediatrics'),
+        ('Radiology', 'Radiology'),
+        ('Oncology', 'Oncology'),
+        ('Gastroenterology', 'Gastroenterology'),
+        ('Hematology', 'Hematology'),
+        ('Endocrinology', 'Endocrinology'),
+        ('Nephrology', 'Nephrology'),
+        ('Pulmonology', 'Pulmonology'),
+        ('Urology', 'Urology'),
+        ('Orthopedics', 'Orthopedics'),
+        ('Rheumatology', 'Rheumatology'),
+        ('Infectious Disease', 'Infectious Disease'),
+        ('Allergy and Immunology', 'Allergy and Immunology'),
+        ('Anesthesiology', 'Anesthesiology'),
+        ('Pathology', 'Pathology'),
+        ('Psychiatry', 'Psychiatry'),
+        ('Ophthalmology', 'Ophthalmology'),
+        ('Obstetrics and Gynecology', 'Obstetrics and Gynecology'),
+        ('Plastic Surgery', 'Plastic Surgery'),
+        ('General Surgery', 'General Surgery'),
+        ('Thoracic Surgery', 'Thoracic Surgery'),
+        ('Vascular Surgery', 'Vascular Surgery'),
+        ('Neurosurgery', 'Neurosurgery'),
+        ('Pediatric Surgery', 'Pediatric Surgery'),
+        ('Trauma Surgery', 'Trauma Surgery'),
+        ('Emergency Medicine', 'Emergency Medicine'),
+        ('Family Medicine', 'Family Medicine')
+    ]
+
 def generate_response(user_input,llm):
 
     role_instruction = (
@@ -99,3 +138,19 @@ def upload_report(request):
             return redirect('home')
         
     return render(request, 'upload_report.html')
+
+@login_required
+def search_doctors(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        query = request.GET.get('query', '')
+        speciality = request.GET.get('speciality', '')
+        doctors = Doctor.objects.filter(username__icontains=query, speciality__icontains=speciality, is_approved=True)
+        results = [
+            {
+                "username": doctor.username,
+                "email": doctor.email,
+                "speciality": doctor.speciality,
+            } for doctor in doctors
+        ]
+        return JsonResponse({"results": results})
+    return render(request, 'search_doctors.html', {'speciality_CHOICES': speciality_CHOICES})

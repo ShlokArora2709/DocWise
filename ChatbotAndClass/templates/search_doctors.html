@@ -1,0 +1,57 @@
+<!-- search_doctors.html -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Doctors</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Doctors</h1>
+        <form id="search-form">
+            <input type="text" id="query" name="query" placeholder="Search by name">
+            <select id="speciality" name="speciality">
+                <option value="">All Specialties</option>
+                {% for value, display in speciality_CHOICES %}
+                <option value="{{ value }}">{{ display }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        <div id="results">
+            <!-- Search results will appear here -->
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $('#search-form').on('submit', function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{% url 'search_doctors' %}",
+                    data: $(this).serialize(),
+                    success: function(data){
+                        var results = data.results;
+                        var resultsDiv = $('#results');
+                        resultsDiv.empty();
+                        if (results.length > 0) {
+                            results.forEach(function(doctor){
+                                var doctorDiv = `<div>
+                                    <h3>${doctor.username}</h3>
+                                    <p>Email: ${doctor.email}</p>
+                                    <p>Specialty: ${doctor.speciality}</p>
+                                    <button>Make Appointment</button>
+                                </div>`;
+                                resultsDiv.append(doctorDiv);
+                            });
+                        } else {
+                            resultsDiv.append('<p>No doctors found.</p>');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
