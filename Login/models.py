@@ -28,7 +28,6 @@ class CustomUser(AbstractUser):
 class Doctor(models.Model):
     username = models.CharField(max_length=150,default='Doctor')
     email = models.EmailField(unique=True, default='example@gmail.com')
-    password = models.CharField(max_length=128,default='12345')  # Use Django's built-in auth system for passwords
     license_file = models.FileField(upload_to='licenses/',default=r"C:\Users\Shlok\Pictures\Screenshots\Screenshot (20).png")
     is_approved = models.BooleanField(default=False)
 
@@ -44,7 +43,7 @@ class Doctor(models.Model):
     
     is_doctor = models.BooleanField(default=False)
 
-@receiver(post_save, sender=Doctor)
-def create_user(sender, instance, created, **kwargs):
-    if created:
-        CustomUser.objects.create(username=instance.username,email=instance.email,password=instance.password,is_doctor=True)
+# @receiver(post_save, sender=Doctor)
+# def create_user(sender, instance, created, **kwargs):
+#     if created:
+#         CustomUser.objects.create(username=instance.username,email=instance.email,password=instance.password,is_doctor=True)

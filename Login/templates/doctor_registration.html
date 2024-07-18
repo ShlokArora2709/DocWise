@@ -19,31 +19,28 @@
             {% csrf_token %}
             
             <div class="form__field">
-              <input type="text" name="username" placeholder="Username">
+                <input type="text" name="username" placeholder="Username" required>
             </div>
             
             <div class="form__field">
-              <input type="email" name="email" placeholder="Email">
+                <input type="email" name="email" placeholder="Email" required>
             </div>
     
             <div class="form__field">
-              <input type="password" name="password1" placeholder="••••••••••••">
+                <input type="password" name="password1" placeholder="Password" required>
             </div>
     
             <div class="form__field">
-                <input type="password" name="password2" placeholder="••••••••••••">
-              </div>
-            
-              <div class="form__field">
-                <input type="file" name="license_file" accept=".jpg, .jpeg, .png, .pdf">
-            </div>
-
-
-            <div class="form__field">
-              <input type="submit" value="Sign Up">
+                <input type="password" name="password2" placeholder="Password confirmation" required>
             </div>
             
+            <div class="form__field">
+                <input type="file" name="license_file" accept=".jpg, .jpeg, .png, .pdf" required>
+            </div>
     
+            <div class="form__field">
+                <input type="submit" value="Sign Up">
+            </div>
         </form>
             {% if error %}
             <p style="color: red;">{{ error }}</p>

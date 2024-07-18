@@ -25,7 +25,7 @@ def login_view(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(data=request.POST)
         if form.is_valid():
-            user,error = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            user= authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
                 return redirect('home')
