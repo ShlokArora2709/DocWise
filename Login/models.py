@@ -26,9 +26,42 @@ class CustomUser(AbstractUser):
     is_doctor = models.BooleanField(default=False)
 
 class Doctor(models.Model):
+    speciality_CHOICES = [
+        ('Cardiology', 'Cardiology'),
+        ('Dermatology', 'Dermatology'),
+        ('Neurology', 'Neurology'),
+        ('Pediatrics', 'Pediatrics'),
+        ('Radiology', 'Radiology'),
+        ('Oncology', 'Oncology'),
+        ('Gastroenterology', 'Gastroenterology'),
+        ('Hematology', 'Hematology'),
+        ('Endocrinology', 'Endocrinology'),
+        ('Nephrology', 'Nephrology'),
+        ('Pulmonology', 'Pulmonology'),
+        ('Urology', 'Urology'),
+        ('Orthopedics', 'Orthopedics'),
+        ('Rheumatology', 'Rheumatology'),
+        ('Infectious Disease', 'Infectious Disease'),
+        ('Allergy and Immunology', 'Allergy and Immunology'),
+        ('Anesthesiology', 'Anesthesiology'),
+        ('Pathology', 'Pathology'),
+        ('Psychiatry', 'Psychiatry'),
+        ('Ophthalmology', 'Ophthalmology'),
+        ('Obstetrics and Gynecology', 'Obstetrics and Gynecology'),
+        ('Plastic Surgery', 'Plastic Surgery'),
+        ('General Surgery', 'General Surgery'),
+        ('Thoracic Surgery', 'Thoracic Surgery'),
+        ('Vascular Surgery', 'Vascular Surgery'),
+        ('Neurosurgery', 'Neurosurgery'),
+        ('Pediatric Surgery', 'Pediatric Surgery'),
+        ('Trauma Surgery', 'Trauma Surgery'),
+        ('Emergency Medicine', 'Emergency Medicine'),
+        ('Family Medicine', 'Family Medicine')
+    ]
     username = models.CharField(max_length=150,default='Doctor')
     email = models.EmailField(unique=True, default='example@gmail.com')
     license_file = models.FileField(upload_to='licenses/',default=r"C:\Users\Shlok\Pictures\Screenshots\Screenshot (20).png")
+    speciality = models.CharField(max_length=150,choices=speciality_CHOICES, default='General Physician')
     is_approved = models.BooleanField(default=False)
 
     def __str__(self):

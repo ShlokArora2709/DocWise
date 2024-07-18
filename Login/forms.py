@@ -18,7 +18,7 @@ class DoctorRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Doctor
-        fields = ['username', 'email', 'license_file']
+        fields = ['username', 'email', 'license_file','speciality']
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')

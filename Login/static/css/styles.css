@@ -57,6 +57,28 @@ input::placeholder {
   background-color: transparent;
   color: #fff;
 }
+.form select {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #378f7b;
+  border-radius: 999px;
+  background-color: transparent;
+  color: #fff;
+  font: inherit;
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
+  appearance: none; 
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+.form select::placeholder {
+  color: #ffc293;
+}
+.form select option {
+  color: #000; 
+  background-color: #fff; 
+}
 
 .grid {
   margin: 0 auto;
