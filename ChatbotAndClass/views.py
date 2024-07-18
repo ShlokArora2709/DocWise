@@ -6,7 +6,8 @@ import re
 from .froms import UploadFileForm
 from pypdf import PdfReader
 from django.contrib.auth.decorators import login_required
-
+from simplegmail import Gmail
+gmail=Gmail()
 
 load_dotenv()
 GenAI.configure(api_key=os.getenv('GEMINI_API_KEY'))
@@ -41,6 +42,21 @@ def generate_response(user_input,llm):
     cleaned_response = re.sub(r'\*\*(.*?)\*\*', r'\1',response.text.strip())
     return cleaned_response
 
+
+def send_email(request,doc_mail,meet_link):
+    user = request.user
+    if user.is_authenticated:
+        params = {
+            "to": doc_mail,
+            "sender":"docwise.shlokarora@gmail.com" ,
+            "cc":user.email,
+            "bcc":"shlokarora2709@gmail.com",
+            "subject": "Appoeintment Confirmation",
+            "msg_html": f"Hello Doctor, {user.username} has booked an appointment with you. Please check your schedule and confirm the appointment. Here is the link to the meeting: {meet_link}",
+            }
+        gmail.send_message(**params)
+        return redirect('home')
+    
 
 def chatbot(request):
     if "conversation" not in request.POST:
@@ -78,7 +94,7 @@ def upload_report(request):
             dict_report_start = response.find("{", dict_start)
             dict_report_end = response.rfind("}") + 1
             dict_report = response[dict_report_start:dict_report_end].strip()
-            # Save the report to the database
+
             os.remove(file.name)
             return redirect('home')
         

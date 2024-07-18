@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, DoctorRegistrationForm
-from django.contrib.auth import get_user_model
-from django.contrib import messages
+
 
 def signup_view(request):
     error = None

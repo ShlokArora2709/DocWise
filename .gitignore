@@ -7,3 +7,6 @@
 /ChatbotAndClass/__pycache__
 /models
 /media
+/client_secret.json
+/gmail_token.json
+/test.py
