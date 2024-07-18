@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, DoctorRegistrationForm
+from django.contrib.auth import get_user_model
+from django.contrib import messages
 
 def signup_view(request):
     error = None
@@ -23,12 +25,12 @@ def login_view(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(data=request.POST)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            user,error = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
                 return redirect('home')
         else:
-            error=form.errors.as_text()
+            error = form.errors.as_text()
     else:
         form = CustomAuthenticationForm()
     return render(request, 'login.html', {'form': form,'error': error})
@@ -44,7 +46,7 @@ def doctor_registration_view(request):
     if request.method == 'POST':
         form = DoctorRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            form
+            form.save()
             error="Doctor registered successfully"
             return redirect('login')
         else:

@@ -1,6 +1,8 @@
 from django.db import models
-
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 class CustomUser(AbstractUser):
     class Meta:
         db_table = 'custom_user'
@@ -36,3 +38,13 @@ class Doctor(models.Model):
     class Meta:
         verbose_name = 'Doctor'
         verbose_name_plural = 'Doctors'
+
+    def isApproved(self):
+        return self.is_approved
+    
+    is_doctor = models.BooleanField(default=False)
+
+@receiver(post_save, sender=Doctor)
+def create_user(sender, instance, created, **kwargs):
+    if created:
+        CustomUser.objects.create(username=instance.username,email=instance.email,password=instance.password,is_doctor=True)
