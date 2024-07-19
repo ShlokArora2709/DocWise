@@ -31,7 +31,9 @@ urlpatterns = [
     path('upload_report/', upload_report, name='upload_report'),
     path('signup/doctor/', doctor_registration_view, name='doctor_registration'),
     path('search/', search_doctors, name='search_doctors'),
-]
+    path('make_appointment/', make_appointment, name='make_appointment'),
+    path('video-call/<str:room_id>/', video_call, name='video_call'),
+    ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

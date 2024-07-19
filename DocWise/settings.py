@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'django.contrib.sites',
     'ChatbotAndClass',
+    'channels',
     
 ]
 
@@ -75,7 +76,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'DocWise.wsgi.application'
-
+ASGI_APPLICATION = 'DocWise.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -146,3 +147,5 @@ AUTH_USER_MODEL = 'Login.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
