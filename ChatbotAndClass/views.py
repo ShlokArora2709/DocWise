@@ -9,6 +9,10 @@ from django.contrib.auth.decorators import login_required
 from simplegmail import Gmail
 from django.http import JsonResponse
 from Login.models import Doctor
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import uuid
 
 
 gmail=Gmail()
@@ -88,9 +92,9 @@ def send_email(request,doc_mail,meet_link):
         params = {
             "to": doc_mail,
             "sender":"docwise.shlokarora@gmail.com" ,
-            "cc":user.email,
-            "bcc":"shlokarora2709@gmail.com",
-            "subject": "Appoeintment Confirmation",
+            "cc":[user.email],
+            "bcc":["shlokarora2709@gmail.com"],
+            "subject": "Appointment Confirmation",
             "msg_html": f"Hello Doctor, {user.username} has booked an appointment with you. Please check your schedule and confirm the appointment. Here is the link to the meeting: {meet_link}",
             }
         gmail.send_message(**params)
@@ -154,3 +158,15 @@ def search_doctors(request):
         ]
         return JsonResponse({"results": results})
     return render(request, 'search_doctors.html', {'speciality_CHOICES': speciality_CHOICES})
+
+@login_required
+def make_appointment(request):
+    if request.method == "POST":
+        doc_mail = request.POST["DocMail"]
+        meet_link =f"http://127.0.0.1:8000/video-call/{uuid.uuid4()}"
+        send_email(request,doc_mail,meet_link)
+    return JsonResponse({"message": "Appointment booked successfully!"})
+
+@login_required
+def video_call(request, room_id):
+    return render(request, 'VideoCall.html', {'room_id': room_id})

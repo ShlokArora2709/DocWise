@@ -6,6 +6,8 @@
     <title>Search Doctors</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 </head>
 <body>
     <div class="container">
@@ -22,6 +24,15 @@
         </form>
         <div id="results">
             <!-- Search results will appear here -->
+        </div>
+        <div id="messages">
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li class="alert {{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     </div>
     <script>
@@ -41,7 +52,7 @@
                                     <h3>${doctor.username}</h3>
                                     <p>Email: ${doctor.email}</p>
                                     <p>Specialty: ${doctor.speciality}</p>
-                                    <button>Make Appointment</button>
+                                    <button class="make-appointment" data-doctor-email="${doctor.email}">Make Appointment</button>
                                 </div>`;
                                 resultsDiv.append(doctorDiv);
                             });
@@ -52,6 +63,66 @@
                 });
             });
         });
+
+        $('#results').on('click', '.make-appointment', function(){
+            var DocMail = $(this).data('doctor-email');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'make_appointment' %}",
+                data: {
+                    'DocMail': DocMail,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response){
+                    // Handle success response
+                    alert('Appointment made successfully!');
+                },
+                error: function(response){
+                    // Handle error response
+                    alert('Failed to make appointment.');
+                }
+            });
+        });
     </script>
+    {% if messages %}
+    <script id="messages-data" type="application/json">
+        {{ messages|json_script:"messages" }}
+    </script>
+{% endif %}
+
+<script>
+    $(document).ready(function() {
+        var messages = [];
+        var messagesElement = document.getElementById('messages-data');
+
+        if (messagesElement) {
+            messages = JSON.parse(messagesElement.textContent);
+        }
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        messages.forEach(function(message) {
+            toastr[message.tags](message.message);
+        });
+    });
+</script>
+
+
 </body>
 </html>
