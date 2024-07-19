@@ -1,7 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Video Call</title>
+    <!-- <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/> -->
+
 </head>
 <body>
     <h1>Video Call</h1>
@@ -9,90 +12,95 @@
     <video id="remoteVideo" autoplay></video>
 
     <script>
-        const localVideo = document.getElementById('localVideo');
-        const remoteVideo = document.getElementById('remoteVideo');
-        let localStream;
-        let peerConnection;
-        const signalingSocket = new WebSocket('ws://' + window.location.host + '/ws/videocall/');
-        signalingSocket.onopen = () => {
-            console.log('WebSocket connection opened');
+        const roomName = "{{ room_id }}";
+        const ws = new WebSocket(`ws://${window.location.host}/ws/videocall/${roomName}/`);
+    
+        ws.onopen = function() {
+            console.log('WebSocket connection established');
+            createOffer(); // Start the process by creating an offer
         };
-
-        signalingSocket.onclose = (event) => {
-            setTimeout(createWebSocket, 5000);
-            console.log('WebSocket connection closed', event);
-        };
-
-        signalingSocket.onerror = (error) => {
-            console.error('WebSocket error', error);
-        };
-
-        signalingSocket.onmessage = async (e) => {
-            const data = JSON.parse(e.data);
-
-            if (data.action === 'offer') {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                signalingSocket.send(JSON.stringify({
-                    'action': 'answer',
-                    'answer': answer
-                }));
-            } else if (data.action === 'answer') {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-            } else if (data.action === 'ice') {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(data.ice));
+    
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const message = data.message;
+    
+            console.log('Received message:', message);
+    
+            if (message.type === 'offer') {
+                console.log('Handling offer');
+                peerConnection.setRemoteDescription(new RTCSessionDescription(message))
+                    .then(() => peerConnection.createAnswer())
+                    .then(answer => {
+                        return peerConnection.setLocalDescription(answer);
+                    })
+                    .then(() => {
+                        ws.send(JSON.stringify({
+                            'message': peerConnection.localDescription
+                        }));
+                    })
+                    .catch(error => console.error('Error handling offer:', error));
+            } else if (message.type === 'answer') {
+                console.log('Handling answer');
+                peerConnection.setRemoteDescription(new RTCSessionDescription(message))
+                    .catch(error => console.error('Error handling answer:', error));
+            } else if (message.candidate) {
+                console.log('Handling ICE candidate');
+                peerConnection.addIceCandidate(new RTCIceCandidate(message))
+                    .catch(error => console.error('Error adding ICE candidate:', error));
             }
         };
-
-        const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-        peerConnection = new RTCPeerConnection(configuration);
-
-        peerConnection.onicecandidate = (event) => {
+    
+        ws.onclose = function() {
+            console.error('WebSocket closed');
+        };
+    
+        // Initialize WebRTC peer connection
+        const peerConnection = new RTCPeerConnection();
+    
+        // Add local stream to peer connection
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                stream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, stream);
+                });
+                document.getElementById('localVideo').srcObject = stream;
+            })
+            .catch(error => console.error('Error accessing media devices:', error));
+    
+        // Handle incoming stream
+        peerConnection.ontrack = function(event) {
+            const remoteVideo = document.getElementById('remoteVideo');
+            if (remoteVideo.srcObject !== event.streams[0]) {
+                remoteVideo.srcObject = event.streams[0];
+                console.log('Remote stream received');
+            }
+        };
+    
+        // Handle ICE candidates
+        peerConnection.onicecandidate = function(event) {
             if (event.candidate) {
-                signalingSocket.send(JSON.stringify({
-                    'action': 'ice',
-                    'ice': event.candidate
+                console.log('Sending ICE candidate');
+                ws.send(JSON.stringify({
+                    'message': event.candidate
                 }));
             }
         };
-
-        peerConnection.ontrack = (event) => {
-            remoteVideo.srcObject = event.streams[0];
-        };
-
-        async function startCall() {
-            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            localVideo.srcObject = localStream;
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
-            signalingSocket.send(JSON.stringify({
-                'action': 'offer',
-                'offer': offer
-            }));
+    
+        // Function to create and send an offer
+        function createOffer() {
+            peerConnection.createOffer()
+                .then(offer => {
+                    return peerConnection.setLocalDescription(offer);
+                })
+                .then(() => {
+                    ws.send(JSON.stringify({
+                        'message': peerConnection.localDescription
+                    }));
+                    console.log('Offer sent');
+                })
+                .catch(error => console.error('Error creating offer:', error));
         }
-
-        signalingSocket.onmessage = async function (e) {
-            const data = JSON.parse(e.data);
-
-            if (data.action === 'offer') {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                signalingSocket.send(JSON.stringify({
-                    'action': 'answer',
-                    'answer': answer
-                }));
-            } else if (data.action === 'answer') {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-            } else if (data.action === 'ice') {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(data.ice));
-            }
-        };
-
-        startCall();
-
     </script>
+    
 </body>
 </html>
