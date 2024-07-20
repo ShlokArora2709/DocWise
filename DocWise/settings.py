@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e#8j%4ufb(yoordwmre#)zv3n!fr5804y=8^)%!_y8ffb51y$q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -154,3 +154,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },}
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://3c6a-49-36-186-31.ngrok-free.app',
+    'http://3c6a-49-36-186-31.ngrok-free.app',
+]

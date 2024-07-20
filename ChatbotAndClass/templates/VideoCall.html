@@ -1,106 +1,128 @@
-{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Video Call</title>
-    <!-- <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/> -->
-
 </head>
 <body>
-    <h1>Video Call</h1>
-    <video id="localVideo" autoplay muted></video>
-    <video id="remoteVideo" autoplay></video>
+    <video id="localVideo" autoplay playsinline muted></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+    <button id="startCallButton">Start Call</button>
 
     <script>
-        const roomName = "{{ room_id }}";
-        const ws = new WebSocket(`ws://${window.location.host}/ws/videocall/${roomName}/`);
-    
-        ws.onopen = function() {
-            console.log('WebSocket connection established');
-            createOffer(); // Start the process by creating an offer
-        };
-    
-        ws.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            const message = data.message;
-    
-            console.log('Received message:', message);
-    
-            if (message.type === 'offer') {
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const roomName = "{{ room_id }}";
+            const ws = new WebSocket(`wss://3c6a-49-36-186-31.ngrok-free.app/ws/videocall/${roomName}/`);// wss for deployment and ws for development
+
+            ws.onopen = function() {
+                console.log('WebSocket connection established');
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const message = data.message;
+
+                console.log('Received message:', message);
+
+                if (message.type === 'offer') {
+                    handleOffer(message);
+                } else if (message.type === 'answer') {
+                    handleAnswer(message);
+                } else if (message.candidate) {
+                    handleCandidate(message);
+                }
+            };
+
+            ws.onclose = function() {
+                console.error('WebSocket closed');
+            };
+
+            // Initialize WebRTC peer connection
+            const peerConnection = new RTCPeerConnection();
+
+            // Add local stream to peer connection
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    stream.getTracks().forEach(track => {
+                        peerConnection.addTrack(track, stream);
+                    });
+                    document.getElementById('localVideo').srcObject = stream;
+                })
+                .catch(error => console.error('Error accessing media devices:', error));
+
+            // Handle incoming stream
+            peerConnection.ontrack = function(event) {
+                const remoteVideo = document.getElementById('remoteVideo');
+                if (remoteVideo.srcObject !== event.streams[0]) {
+                    remoteVideo.srcObject = event.streams[0];
+                    console.log('Remote stream received');
+                }
+            };
+
+            // Handle ICE candidates
+            peerConnection.onicecandidate = function(event) {
+                if (event.candidate) {
+                    console.log('Sending ICE candidate');
+                    ws.send(JSON.stringify({
+                        'message': event.candidate
+                    }));
+                }
+            };
+
+            function handleOffer(message) {
                 console.log('Handling offer');
+                if (peerConnection.signalingState !== 'stable') {
+                    console.error('PeerConnection not in stable state for offer');
+                    return;
+                }
                 peerConnection.setRemoteDescription(new RTCSessionDescription(message))
                     .then(() => peerConnection.createAnswer())
-                    .then(answer => {
-                        return peerConnection.setLocalDescription(answer);
-                    })
+                    .then(answer => peerConnection.setLocalDescription(answer))
                     .then(() => {
                         ws.send(JSON.stringify({
                             'message': peerConnection.localDescription
                         }));
                     })
                     .catch(error => console.error('Error handling offer:', error));
-            } else if (message.type === 'answer') {
+            }
+
+            function handleAnswer(message) {
                 console.log('Handling answer');
+                if (peerConnection.signalingState !== 'have-local-offer') {
+                    console.error('PeerConnection not in the correct state for answer');
+                    return;
+                }
                 peerConnection.setRemoteDescription(new RTCSessionDescription(message))
                     .catch(error => console.error('Error handling answer:', error));
-            } else if (message.candidate) {
+            }
+
+            function handleCandidate(message) {
                 console.log('Handling ICE candidate');
                 peerConnection.addIceCandidate(new RTCIceCandidate(message))
                     .catch(error => console.error('Error adding ICE candidate:', error));
             }
-        };
-    
-        ws.onclose = function() {
-            console.error('WebSocket closed');
-        };
-    
-        // Initialize WebRTC peer connection
-        const peerConnection = new RTCPeerConnection();
-    
-        // Add local stream to peer connection
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(stream => {
-                stream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, stream);
-                });
-                document.getElementById('localVideo').srcObject = stream;
-            })
-            .catch(error => console.error('Error accessing media devices:', error));
-    
-        // Handle incoming stream
-        peerConnection.ontrack = function(event) {
-            const remoteVideo = document.getElementById('remoteVideo');
-            if (remoteVideo.srcObject !== event.streams[0]) {
-                remoteVideo.srcObject = event.streams[0];
-                console.log('Remote stream received');
+
+            // Function to create and send an offer
+            function createOffer() {
+                if (peerConnection.signalingState !== 'stable') {
+                    console.error('PeerConnection not in stable state to create offer');
+                    return;
+                }
+                peerConnection.createOffer()
+                    .then(offer => {
+                        return peerConnection.setLocalDescription(offer);
+                    })
+                    .then(() => {
+                        ws.send(JSON.stringify({
+                            'message': peerConnection.localDescription
+                        }));
+                        console.log('Offer sent');
+                    })
+                    .catch(error => console.error('Error creating offer:', error));
             }
-        };
-    
-        // Handle ICE candidates
-        peerConnection.onicecandidate = function(event) {
-            if (event.candidate) {
-                console.log('Sending ICE candidate');
-                ws.send(JSON.stringify({
-                    'message': event.candidate
-                }));
-            }
-        };
-    
-        // Function to create and send an offer
-        function createOffer() {
-            peerConnection.createOffer()
-                .then(offer => {
-                    return peerConnection.setLocalDescription(offer);
-                })
-                .then(() => {
-                    ws.send(JSON.stringify({
-                        'message': peerConnection.localDescription
-                    }));
-                    console.log('Offer sent');
-                })
-                .catch(error => console.error('Error creating offer:', error));
-        }
+
+            // Add event listener to the button
+            document.getElementById('startCallButton').addEventListener('click', createOffer);
+        });
     </script>
-    
 </body>
 </html>
