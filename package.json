@@ -1,5 +1,1 @@
-{
-  "devDependencies": {
-    "tailwind": "^4.0.0"
-  }
-}
+{"scripts":{"build:css":"npx postcss Login/static/styles.css -o Login/static/output.css","watch:css":"npx postcss Login/static/styles.css -o Login/static/output.css --watch"},"devDependencies":{"autoprefixer":"^10.4.19","postcss":"^8.4.39","postcss-cli":"^11.0.0","tailwindcss":"^3.4.6"},"dependencies":{"amqplib":"^0.10.4"}}

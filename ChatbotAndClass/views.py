@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import uuid
-
+from .models import Report
 
 gmail=Gmail()
 
@@ -137,8 +137,8 @@ def upload_report(request):
             dict_report_start = response.find("{", dict_start)
             dict_report_end = response.rfind("}") + 1
             dict_report = response[dict_report_start:dict_report_end].strip()
+            Report.objects.create(username=request.user, report=file, summary=summary, data=dict_report)
 
-            os.remove(file.name)
             return redirect('home')
         
     return render(request, 'upload_report.html')
@@ -163,7 +163,7 @@ def search_doctors(request):
 def make_appointment(request):
     if request.method == "POST":
         doc_mail = request.POST["DocMail"]
-        meet_link =f"http://127.0.0.1:8000/video-call/{uuid.uuid4()}"
+        meet_link =f"http://127.0.0.1:8000/videocall/{uuid.uuid4()}"
         send_email(request,doc_mail,meet_link)
     return JsonResponse({"message": "Appointment booked successfully!"})
 

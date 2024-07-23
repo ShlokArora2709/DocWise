@@ -2,16 +2,33 @@
 <html>
 <head>
     <title>Video Call</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/js/all.min.js"></script>
 </head>
-<body>
-    <video id="localVideo" autoplay playsinline muted></video>
-    <video id="remoteVideo" autoplay playsinline></video>
-    <button id="startCallButton">Start Call</button>
+<body class="bg-gray-800 text-white flex flex-col items-center justify-center min-h-screen">
+    <div class="w-full max-w-3xl bg-gray-900 rounded-lg shadow-lg p-6">
+        <div class="flex justify-center mb-4">
+            <video id="localVideo" class="w-full max-w-md rounded-lg" autoplay playsinline muted></video>
+        </div>
+        <div class="flex justify-center mb-4">
+            <video id="remoteVideo" class="w-full max-w-md rounded-lg" autoplay playsinline></video>
+        </div>
+        <div class="flex justify-center space-x-4">
+            <button id="startCallButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center">
+                <i class="fas fa-video mr-2"></i>
+                Start Call
+            </button>
+            <button id="endCallButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center">
+                <i class="fas fa-phone-slash mr-2"></i>
+                End Call
+            </button>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const roomName = "{{ room_id }}";
-            const ws = new WebSocket(`wss://3c6a-49-36-186-31.ngrok-free.app/ws/videocall/${roomName}/`);// wss for deployment and ws for development
+            const ws = new WebSocket(`ws://${window.location.hostname}:8001/ws/videocall/${roomName}/`);
 
             ws.onopen = function() {
                 console.log('WebSocket connection established');
@@ -36,10 +53,8 @@
                 console.error('WebSocket closed');
             };
 
-            // Initialize WebRTC peer connection
             const peerConnection = new RTCPeerConnection();
 
-            // Add local stream to peer connection
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                 .then(stream => {
                     stream.getTracks().forEach(track => {
@@ -49,7 +64,6 @@
                 })
                 .catch(error => console.error('Error accessing media devices:', error));
 
-            // Handle incoming stream
             peerConnection.ontrack = function(event) {
                 const remoteVideo = document.getElementById('remoteVideo');
                 if (remoteVideo.srcObject !== event.streams[0]) {
@@ -58,7 +72,6 @@
                 }
             };
 
-            // Handle ICE candidates
             peerConnection.onicecandidate = function(event) {
                 if (event.candidate) {
                     console.log('Sending ICE candidate');
@@ -101,7 +114,6 @@
                     .catch(error => console.error('Error adding ICE candidate:', error));
             }
 
-            // Function to create and send an offer
             function createOffer() {
                 if (peerConnection.signalingState !== 'stable') {
                     console.error('PeerConnection not in stable state to create offer');
@@ -120,8 +132,13 @@
                     .catch(error => console.error('Error creating offer:', error));
             }
 
-            // Add event listener to the button
             document.getElementById('startCallButton').addEventListener('click', createOffer);
+
+            document.getElementById('endCallButton').addEventListener('click', () => {
+                peerConnection.close();
+                ws.close();
+                console.log('Call ended');
+            });
         });
     </script>
 </body>
