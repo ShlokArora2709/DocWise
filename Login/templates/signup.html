@@ -6,44 +6,40 @@
   <title>Sign Up</title>
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link rel="stylesheet" href="{% static 'output.css' %}">
   <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
 </head>
-<body class="bg-indigo-900 flex items-center justify-center h-screen">
+<body>
 
-  <div class="max-w-xl w-full p-10 bg-gray-900 rounded-lg shadow-xl">
-    <img src="{% static 'logo1.png' %}" alt="logo" class="w-20 h-20 mx-auto mb-4">
-    <h2 class="text-3xl font-light mb-4 text-center uppercase">Sign Up</h2>
+  <div class="logincontainer">
+    <img src="{% static 'logo1.png' %}" alt="logo" class="icon">
+    <h2 class="headingText">Sign Up</h2>
 
-    <form action="" method="post" class="space-y-4">
+    <form action="" method="post" class="loginForm">
       {% csrf_token %}
 
-      <div class="form__field">
-        <input type="text" name="username" placeholder="Username" class="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-200 placeholder-gray-500 focus:outline-none focus:bg-gray-700">
+      <div >
+        <input type="text" name="username" placeholder="Username" class="formfield">
       </div>
 
-      <div class="form__field">
-        <input type="email" name="email" placeholder="Email" class="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-200 placeholder-gray-500 focus:outline-none focus:bg-gray-700">
+      <div>
+        <input type="email" name="email" placeholder="Email" class="formfield">
       </div>
 
-      <div class="form__field">
-        <input type="password" name="password1" placeholder="••••••••••••" class="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-200 placeholder-gray-500 focus:outline-none focus:bg-gray-700">
+      <div>
+        <input type="password" name="password1" placeholder="••••••••••••" class="formfield">
       </div>
 
-      <div class="form__field">
-        <input type="password" name="password2" placeholder="••••••••••••" class="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-200 placeholder-gray-500 focus:outline-none focus:bg-gray-700">
-      </div>
-
-      <div class="form__field">
-        <input type="submit" value="Sign Up" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-400 text-white text-center uppercase tracking-wide font-semibold focus:outline-none">
+      <div ">
+        <input type="password" name="password2" placeholder="••••••••••••" class="formfield"
       </div>
     </form>
 
     {% if error %}
-      <p class="text-red-500 text-center mt-2">{{ error }}</p>
+      <p class="error">{{ error }}</p>
     {% endif %}
 
-    <p class="mt-4 text-center text-gray-400">Already have an account? <a href="/login" class="text-green-400">Log in</a></p>
+    <p>Already have an account? <a href="/login" class="text-green-400">Log in</a></p>
 
   </div>
 
