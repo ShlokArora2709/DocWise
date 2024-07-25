@@ -21,7 +21,7 @@
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/docwise.git
+    git clone https://github.com/ShlokArora2709/DocWise.git
     cd docwise
     ```
 
