@@ -92,7 +92,7 @@ def send_email(request,doc_mail,meet_link):
             "to": doc_mail,
             "sender":"docwise.shlokarora@gmail.com" ,
             "cc":[user.email],
-            "bcc":["shlokarora2709@gmail.com"],
+#            "bcc":[],
             "subject": "Appointment Confirmation",
             "msg_html": f"Hello Doctor, {user.username} has booked an appointment with you. Please check your schedule and confirm the appointment. Here is the link to the meeting: {meet_link}",
             }
