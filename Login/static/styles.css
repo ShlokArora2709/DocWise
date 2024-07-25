@@ -154,3 +154,124 @@ h2 {
     content: "Doctor license file"; /* Placeholder text */
     @apply absolute inset-0 flex items-center pl-4 text-gray-500;
 }
+
+.chat-container {
+    @apply w-full max-w-screen-xl bg-custom-blue rounded-lg p-4 flex flex-col shadow-lg shadow-custom-teal
+}
+
+.chat-header {
+    @apply text-center font-bold text-xl mb-4;
+}
+
+.chat-messages {
+    @apply flex flex-col space-y-2 flex-grow overflow-y-auto mb-4;
+    height: 400px;
+}
+
+.message {
+    @apply p-2 rounded-lg shadow;
+}
+
+.user-message {
+    @apply bg-blue-500 text-white self-end;
+}
+
+.bot-response {
+    @apply bg-emerald-800 self-start;
+}
+
+.chat-input {
+    @apply flex;
+}
+
+.input-field {
+    @apply flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none bg-custom-gray-blue;
+}
+
+.send-button {
+    @apply bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+.container {
+    @apply max-w-3xl w-full p-6 bg-custom-blue rounded-lg shadow-lg;
+}
+
+.page-title {
+    @apply text-2xl font-bold mb-4 text-center;
+}
+
+.search-form {
+    @apply flex flex-col sm:flex-row items-center justify-between mb-4
+}
+
+.search-input {
+    @apply flex-grow mb-2 sm:mb-0 sm:mr-2 p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-custom-gray-blue;
+}
+
+.search-select {
+    @apply mb-2 sm:mb-0 sm:mr-2 p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-custom-gray-blue;
+}
+
+.search-button {
+    @apply p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.results {
+    @apply space-y-4;
+}
+
+.doctor-card {
+    @apply p-4 bg-emerald-900 rounded shadow;
+}
+
+.doctor-name {
+    @apply text-lg font-bold mb-2;
+}
+
+.doctor-email, .doctor-speciality {
+    @apply mb-2;
+}
+
+.no-results {
+    @apply text-center text-gray-500;
+}
+
+.make-appointment {
+    @apply p-2 text-black rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500;
+
+}
+
+.messages {
+    @apply mt-4;
+}
+
+.alert {
+    @apply mb-2 p-2 rounded;
+}
+
+.alert-success {
+    @apply bg-green-100 text-green-700;
+}
+
+.alert-error {
+    @apply bg-red-100 text-red-700;
+}
+
+.page-title {
+    @apply text-2xl font-bold mb-4 text-center;
+}
+
+.upload-form {
+    @apply flex flex-col items-center justify-between mb-4;
+}
+
+.upload-input {
+    @apply mb-2 p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.upload-button {
+    @apply p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.file-text {
+    @apply p-2 rounded border border-gray-300;
+}

@@ -15,7 +15,8 @@ module.exports = {
         'custom-teal': '#31e4b3',
         'custom-pink': '#e72da2',
         'custom-orange': '#e69500',
-        'custom-blue-2':'#130057'
+        'custom-blue-2':'#130057',
+        'custom-gray-blue':'#302a3d'
       }
     }
   },

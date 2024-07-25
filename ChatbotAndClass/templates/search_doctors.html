@@ -5,57 +5,57 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>Search Doctors</h1>
-        <form id="search-form">
-            <input type="text" id="query" name="query" placeholder="Search by name">
-            <select id="speciality" name="speciality">
-                <option value="">All Specialties</option>
-                {% for value, display in speciality_CHOICES %}
-                <option value="{{ value }}">{{ display }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Search</button>
-        </form>
-        <div id="results">
-            <!-- Search results will appear here -->
-        </div>
-        <div id="messages">
-            {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        <li class="alert {{ message.tags }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+<div class="chat-container">
+    <h1 class="page-title">Search Doctors</h1>
+    <form id="search-form" class="search-form">
+        <input type="text" id="query" name="query" placeholder="Search by name" class="search-input">
+        <select id="speciality" name="speciality" class="search-select">
+            <option value="">All Specialties</option>
+            {% for value, display in speciality_CHOICES %}
+            <option value="{{ value }}">{{ display }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="search-button">Search</button>
+    </form>
+    <div id="results" class="results">
+        <!-- Search results will appear here -->
     </div>
-    <script>
-        $(document).ready(function(){
-            $('#search-form').on('submit', function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{% url 'search_doctors' %}",
-                    data: $(this).serialize(),
-                    success: function(data){
-                        var results = data.results;
-                        var resultsDiv = $('#results');
-                        resultsDiv.empty();
-                        if (results.length > 0) {
-                            results.forEach(function(doctor){
-                                var doctorDiv = `<div>
-                                    <h3>${doctor.username}</h3>
-                                    <p>Email: ${doctor.email}</p>
-                                    <p>Specialty: ${doctor.speciality}</p>
-                                    <button class="make-appointment" data-doctor-email="${doctor.email}">Make Appointment</button>
-                                </div>`;
-                                resultsDiv.append(doctorDiv);
-                            });
-                        } else {
-                            resultsDiv.append('<p>No doctors found.</p>');
-                        }
+    <div id="messages" class="messages">
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li class="alert {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#search-form').on('submit', function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'search_doctors' %}",
+                data: $(this).serialize(),
+                success: function(data){
+                    var results = data.results;
+                    var resultsDiv = $('#results');
+                    resultsDiv.empty();
+                    if (results.length > 0) {
+                        results.forEach(function(doctor){
+                            var doctorDiv = `<div class="doctor-card">
+                                <h3 class="doctor-name">${doctor.username}</h3>
+                                <h3 class="doctor-email">Email: ${doctor.email}</h3>
+                                <h3 class="doctor-speciality">Specialty: ${doctor.speciality}</h3>
+                                <button class="make-appointment" data-doctor-email="${doctor.email}">Make Appointment</button>
+                            </div>`;
+                            resultsDiv.append(doctorDiv);
+                        });
+                    } else {
+                        resultsDiv.append('<p class="no-results">No doctors found.</p>');
                     }
-                });
+                }
             });
         });
 
@@ -69,20 +69,20 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function(response){
-                    // Handle success response
                     alert('Appointment made successfully!');
                 },
                 error: function(response){
-                    // Handle error response
                     alert('Failed to make appointment.');
                 }
             });
         });
-    </script>
-    {% if messages %}
-    <script id="messages-data" type="application/json">
-        {{ messages|json_script:"messages" }}
-    </script>
+    });
+</script>
+
+{% if messages %}
+<script id="messages-data" type="application/json">
+    {{ messages|json_script:"messages" }}
+</script>
 {% endif %}
 
 <script>
@@ -117,5 +117,4 @@
         });
     });
 </script>
-
 {% endblock %}

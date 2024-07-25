@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('', home_view, name='home'),
     path('chatbot/', chatbot, name='chatbot'),
+    path('chatbot_response/', chatbot_response, name='chatbot_response'),
     path('upload_report/', upload_report, name='upload_report'),
     path('signup/doctor/', doctor_registration_view, name='doctor_registration'),
     path('search/', search_doctors, name='search_doctors'),

@@ -5,18 +5,72 @@
 {% endblock %}
 
 {% block content %}
-    <div class="chatbot-container">
-        <h1>Chatbot</h1>
-        <div class="conversation-box">
-            <textarea rows="20" cols="80" readonly>{{ conversation }}</textarea>
-        </div>
-        <form method="post">
-            {% csrf_token %}
-            <input type="text" name="userinput" value="{{ userinput }}" placeholder="Type your message..." required>
-            <button type="submit">Send</button>
-        </form>
-        <br>
-        <br>
-        <a href="/" type="button" class="button">Back</a> 
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>DocBot</h2>
     </div>
+    <div class="chat-messages" id="chat-messages">
+        {% if conversation_history %}
+            {% for message in conversation_history %}
+                <div class="message {% if message.type == 'user' %}user-message{% else %}bot-response{% endif %}">
+                    {{ message.message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Type your message..." class="input-field">
+        <button id="send-button" class="send-button">Send</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#send-button').click(function(){
+            let user_input = $('#user-input').val();
+            if (user_input.trim() === "") {
+                return;
+            }
+
+            $('#chat-messages').append('<div class="message user-message">' + user_input + '</div>');
+            $('#user-input').val('');
+
+            $.ajax({
+                url: '{% url "chatbot_response" %}',
+                data: {
+                    'user_input': user_input
+                },
+                dataType: 'json',
+                success: function(data){
+                    typeResponse(data.response);
+                },
+                error: function(){
+                    typeResponse("Error in processing your request");
+                }
+            });
+        });
+
+        $('#user-input').keypress(function(e){
+            if (e.which == 13) {
+                $('#send-button').click();
+            }
+        });
+    });
+
+    function typeResponse(response) {
+        let index = 0;
+        let messageElement = $('<div class="message bot-response"></div>');
+        $('#chat-messages').append(messageElement);
+        
+        function typeCharacter() {
+            if (index < response.length) {
+                messageElement.append(response[index]);
+                index++;
+                setTimeout(typeCharacter, 5); 
+            }
+        }
+        
+        typeCharacter();
+    }
+</script>
 {% endblock %}

@@ -11,9 +11,9 @@ from django.http import JsonResponse
 from Login.models import Doctor
 from django.contrib import messages
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 import uuid
 from .models import Report
+from django.contrib.messages import get_messages
 
 gmail=Gmail()
 
@@ -101,21 +101,22 @@ def send_email(request,doc_mail,meet_link):
         return redirect('home')
     
 
-def chatbot(request):
-    if "conversation" not in request.POST:
-        conversation=""
-    else:
-         conversation=request.POST["conversation"]
+def chatbot(request): 
+    conversation_history = request.session.get('conversation_history', [])  
+    return render(request, 'chatbot.html', {'conversation_history': conversation_history})
 
-    userinput=""
-    if request.method=="POST":
-        userinput=request.POST["userinput"]
-        conversation+=f"User: {userinput}\n"
-        response=generate_response(conversation,llm)
-        conversation += f"\nChatbot: {response}"
-    
-    return render(request, 'chatbot.html', {'conversation': conversation, 'userinput': userinput})
 
+def chatbot_response(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        user_input = request.GET.get('user_input', '')
+        conversation = request.session.get('conversation', [])
+        conversation.append({'type': 'user', 'message': user_input})
+        full_context = " ".join([msg['message'] for msg in conversation])
+        response = generate_response(full_context, llm)
+        conversation.append({'type': 'bot', 'message': response})
+        request.session['conversation'] = conversation
+        return JsonResponse({"response": response})
+    return JsonResponse({"response": "Invalid request"})
 
 @login_required
 def upload_report(request):
@@ -139,9 +140,24 @@ def upload_report(request):
             dict_report = response[dict_report_start:dict_report_end].strip()
             Report.objects.create(username=request.user, report=file, summary=summary, data=dict_report)
 
-            return redirect('home')
+            messages.success(request, "Report uploaded and saved successfully!")
+            return redirect('upload_report')
         
-    return render(request, 'upload_report.html')
+    storage = get_messages(request)
+    messages_list = []
+    for message in storage:
+        messages_list.append({
+            'level': message.level,
+            'message': message.message,
+            'tags': message.tags
+        })
+
+    context = {
+        'file_text': file_text,
+        'messages': messages_list
+    }
+
+    return render(request, 'upload_report.html', context)
 
 @login_required
 def search_doctors(request):

@@ -1,4 +1,3 @@
-
 {% extends 'master.html' %}
 {% load static %}
 {% block title %}
@@ -6,18 +5,58 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Upload Your Report PDF</h2>
-    
-    <form method="post" enctype="multipart/form-data">
+<div class="container">
+    <h2 class="page-title">Upload Your Report PDF</h2>
+    <form method="post" enctype="multipart/form-data" class="upload-form">
         {% csrf_token %}
-        <input type="file" name="file">
+        <input type="file" name="file" class="upload-input">
         <br><br>
-        <button type="submit">Upload</button>
+        <button type="submit" class="upload-button">Upload</button>
     </form>
 
     {% if file_text %}
         <hr>
         <h3>Uploaded File Content:</h3>
-        <textarea rows="20" cols="80" readonly>{{ file_text }}</textarea>
+        <textarea rows="20" cols="80" readonly class="file-text">{{ file_text }}</textarea>
     {% endif %}
+
+    {% if messages %}
+    <script id="messages-data" type="application/json">
+        {{ messages|safe }}
+    </script>
+    {% endif %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        var messages = [];
+        var messagesElement = document.getElementById('messages-data');
+
+        if (messagesElement) {
+            messages = JSON.parse(messagesElement.textContent);
+        }
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        messages.forEach(function(message) {
+            toastr[message.tags](message.message);
+        });
+    });
+</script>
 {% endblock %}
