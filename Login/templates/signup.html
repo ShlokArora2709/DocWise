@@ -1,15 +1,10 @@
+{% extends 'master.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Sign Up</title>
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{% static 'output.css' %}">
-  <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
-</head>
-<body>
+{% block title %}
+  Login
+{% endblock %}
+
+{% block content %}
 
   <div class="logincontainer">
     <img src="{% static 'logo1.png' %}" alt="logo" class="icon">
@@ -30,9 +25,15 @@
         <input type="password" name="password1" placeholder="••••••••••••" class="formfield">
       </div>
 
-      <div ">
+      <div>
         <input type="password" name="password2" placeholder="••••••••••••" class="formfield"
       </div>
+
+      <br>
+      <br>
+
+      <input type="submit" value="Sign Up" class="submit-button">
+      
     </form>
 
     {% if error %}
@@ -43,5 +44,4 @@
 
   </div>
 
-</body>
-</html>
+{% endblock %}

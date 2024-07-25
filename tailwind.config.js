@@ -9,12 +9,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'custom-fuchsia': '#4a053b',
-        'custom-blue': '#312e81',
+        'custom-fuchsia': '#120021',
+        'custom-blue': '#00001c',
         'custom-yellow': '#e9df0e',
         'custom-teal': '#31e4b3',
         'custom-pink': '#e72da2',
-        'custom-orange': '#e69500' // dim shade of orange
+        'custom-orange': '#e69500',
+        'custom-blue-2':'#130057'
       }
     }
   },

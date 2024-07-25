@@ -1,15 +1,10 @@
-<!-- search_doctors.html -->
+{% extends 'master.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Search Doctors</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-</head>
-<body>
+{% block title %}
+  Book Appointment
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <h1>Search Doctors</h1>
         <form id="search-form">
@@ -123,6 +118,4 @@
     });
 </script>
 
-
-</body>
-</html>
+{% endblock %}

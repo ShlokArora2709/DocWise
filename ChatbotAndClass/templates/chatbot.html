@@ -1,12 +1,10 @@
+{% extends 'master.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chatbot</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
-</head>
-<body>
+{% block title %}
+  DocBot
+{% endblock %}
+
+{% block content %}
     <div class="chatbot-container">
         <h1>Chatbot</h1>
         <div class="conversation-box">
@@ -21,5 +19,4 @@
         <br>
         <a href="/" type="button" class="button">Back</a> 
     </div>
-</body>
-</html>
+{% endblock %}
