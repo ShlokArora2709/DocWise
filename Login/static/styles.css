@@ -36,7 +36,7 @@ p {
 }
 
 a {
-    @apply text-emerald-200 hover:text-emerald-400;
+    @apply text-emerald-200 hover:text-emerald-500;
 }
 
 .selectfield {
@@ -73,7 +73,7 @@ a {
 }
 
 .container {
-    @apply max-w-3xl w-full p-6 bg-custom-blue-2 rounded-lg shadow-2xl text-center;
+    @apply max-w-3xl w-full p-6 bg-custom-blue-2 rounded-lg shadow-2xl text-center shadow-custom-teal;
 }
 
 h2 {
@@ -115,12 +115,9 @@ h2 {
     @apply text-white px-4 py-2 font-medium rounded-md transition duration-200 ease-in-out text-xl;
 }
 
-.navbar-link:hover {
-    @apply bg-custom-blue-2;
-}
 
 .main-content {
-    @apply flex-grow flex flex-col items-center justify-center p-6 pt-24;
+    @apply flex-grow flex flex-col items-center justify-center p-6 pt-144 mt-144;
 }
 
 .heading {
@@ -220,7 +217,7 @@ h2 {
 }
 
 .doctor-card {
-    @apply p-4 bg-emerald-900 rounded shadow;
+    @apply p-4 bg-emerald-900 rounded shadow-xl;
 }
 
 .doctor-name {
@@ -236,7 +233,7 @@ h2 {
 }
 
 .make-appointment {
-    @apply p-2 text-black rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500;
+    @apply p-2 text-black rounded hover:bg-emerald-500  bg-emerald-300 shadow-lg;
 
 }
 
@@ -274,4 +271,78 @@ h2 {
 
 .file-text {
     @apply p-2 rounded border border-gray-300;
+}
+.video-container {
+    @apply flex justify-center items-center relative w-4/5 h-3/5 bg-black rounded-lg overflow-hidden;
+}
+
+video {
+    @apply w-full h-full object-cover;
+}
+
+#localVideo {
+    @apply absolute top-2.5 right-2.5 w-48 h-36 border-2 border-white rounded-lg z-10;
+}
+
+.controls {
+    @apply mt-5 flex justify-center gap-5;
+}
+
+.control-button {
+    @apply py-2 px-4 border-none rounded-lg bg-green-500 text-white text-base cursor-pointer flex items-center gap-2;
+}
+
+.control-button i {
+    @apply text-lg;
+}
+
+.control-button.end-call {
+    @apply bg-red-500;
+}
+
+.control-button:hover {
+    @apply opacity-90;
+}
+
+.heading {
+    @apply text-2xl mb-5;
+}
+
+.user-info {
+    @apply mb-5;
+}
+
+.user-role {
+    @apply font-bold text-green-500;
+}
+
+.greeting {
+    @apply text-lg;
+}
+
+.report-section {
+    @apply mt-5;
+}
+
+.reports-list {
+    @apply flex flex-col gap-5;
+}
+
+.report-card {
+    @apply p-4 bg-emerald-950 border border-gray-300 rounded-lg;
+}
+
+.report-card p {
+    @apply my-1;
+}
+
+.report-card a {
+    @apply text-blue-500 no-underline;
+}
+
+.report-card a:hover {
+    @apply underline;
+}
+.report-text{
+    @apply mb-2 text-left
 }

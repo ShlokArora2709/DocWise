@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, DoctorRegistrationForm
-
+from ChatbotAndClass.models import Report
 
 def signup_view(request):
     error = None
@@ -39,7 +39,11 @@ def logout_view(request):
     return redirect('home')
 
 def home_view(request):
-    return render(request, 'home.html')
+    if request.user.is_authenticated:
+        reports = Report.objects.filter(username=request.user.username)
+    else:
+        reports = None
+    return render(request, 'home.html', {'reports': reports})
 
 def doctor_registration_view(request):
     if request.method == 'POST':

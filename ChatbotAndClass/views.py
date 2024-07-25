@@ -10,7 +10,6 @@ from simplegmail import Gmail
 from django.http import JsonResponse
 from Login.models import Doctor
 from django.contrib import messages
-from django.http import JsonResponse
 import uuid
 from .models import Report
 from django.contrib.messages import get_messages

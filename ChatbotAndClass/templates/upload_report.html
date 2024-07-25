@@ -3,9 +3,10 @@
 {% block title %}
   Upload Report
 {% endblock %}
+{% block page_title %}Upload Report{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="chat-container">
     <h2 class="page-title">Upload Your Report PDF</h2>
     <form method="post" enctype="multipart/form-data" class="upload-form">
         {% csrf_token %}
