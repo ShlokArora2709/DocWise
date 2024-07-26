@@ -8,9 +8,13 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 """
 
 import os
-
+from .settings import STATIC_ROOT
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DocWise.settings')
 
 application = get_wsgi_application()
+
+from whitenoise import WhiteNoise
+
+application = WhiteNoise(application, root=STATIC_ROOT)
