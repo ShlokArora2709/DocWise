@@ -17,6 +17,10 @@ module.exports = {
         'custom-orange': '#e69500',
         'custom-blue-2':'#130057',
         'custom-gray-blue':'#302a3d'
+      },
+      spacing: {
+        '128': '32rem', // Adjust as needed
+        '144': '36rem', // Add more custom values if needed
       }
     }
   },

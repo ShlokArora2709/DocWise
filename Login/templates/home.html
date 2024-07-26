@@ -3,19 +3,45 @@
 {% block title %}
   Home
 {% endblock %}
+{% block page_title %}Home{% endblock %}
 
 {% block content %}
     <main class="main-content">
-        <h2 class="heading">Welcome to the Home Page</h2>
+        <h2 class="headingText">Welcome to the Home Page</h2>
         
         {% csrf_token %}
         
         {% if user.is_authenticated %}
-            <div class="user-info">
-                {% if user.is_doctor %}
-                    <p class="user-role">Doctor</p>
+
+
+            <div class="report-section">
+                <h3 class="headingText">Your Reports</h3>
+                {% if reports %}
+                    <div class="reports-list">
+                        {% for report in reports %}
+                            <div class="report-card">
+                                <div class="bg-white shadow-md rounded-lg p-4 border border-gray-200">
+                                    <h4 class="text-lg font-bold mb-2">
+                                        <strong>Report:</strong>
+                                        <a href="{{ report.report.url }}" class="text-blue-500 hover:text-custom-teal">{{ report.report.name }}</a>
+                                    </h4>
+                                    <p class="report-text">
+                                        <strong>Summary:</strong> {{ report.summary }}
+                                    </p>
+                                    <p class="report-text">
+                                        <strong>Data:</strong>
+                                        <pre class="bg-gray-100 p-2 rounded">{{ report.data|safe }}</pre>
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        <strong>Created at:</strong> {{ report.created_at }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>You have no reports.</p>
                 {% endif %}
-                <p class="greeting">Hello, {{ user.username }}!</p>
             </div>
         {% endif %}
     </main>
