@@ -3,6 +3,7 @@
 
 # DocWise
 
+**Live Deployement Link**-https://docwise.onrender.com
 ## Description
 
 **DocWise** is a Django-based web application designed to manage medical consultations and reports. It includes features for uploading and processing medical reports, registering doctors, booking appointments, and engaging with a medical chatbot. The application also supports video calling for virtual consultations using WebRTC.
