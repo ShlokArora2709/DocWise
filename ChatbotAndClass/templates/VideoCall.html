@@ -19,7 +19,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const roomName = "{{ room_id }}";
-            const ws = new WebSocket(`ws://${window.location.hostname}:8001/ws/videocall/${roomName}/`);
+            const ws = new WebSocket(`wss://${window.location.host}/ws/videocall/${roomName}/`);
 
             ws.onopen = function() {
                 console.log('WebSocket connection established');
