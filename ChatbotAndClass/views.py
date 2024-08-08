@@ -13,12 +13,26 @@ from django.contrib import messages
 import uuid
 from .models import Report
 from django.contrib.messages import get_messages
+from langchain_community.document_loaders import ArxivLoader
+import spacy
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores.utils import filter_complex_metadata
+from langchain.prompts import ChatPromptTemplate
+from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
+
+
+nlp = spacy.load("en_core_web_sm")
 
 gmail=Gmail()
 
 load_dotenv()
 GenAI.configure(api_key=os.getenv('GEMINI_API_KEY'))
 llm=GenAI.GenerativeModel('gemini-1.5-pro')
+os.environ['GOOGLE_API_KEY'] = os.getenv('GOOGLE_API_KEY')
+embeddings=GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 input_text=f'''Generate a summary report of the patient\'s medical report and make a dictionary
  for the things that were checked in the medical report. The report dictionary should have 
@@ -72,18 +86,31 @@ speciality_CHOICES = [
         ('Emergency Medicine', 'Emergency Medicine'),
         ('Family Medicine', 'Family Medicine')
     ]
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
 
-def generate_response(user_input,llm):
+def generate_response(prev_chat,llm,user_input):
 
-    role_instruction = (
-        "You are a medical chatbot. Your purpose is to provide medical advice, "
-        "answer health-related questions, and help users understand their symptoms. "
-        "If the user asks questions that are not related to medical topics, politely decline to answer."
-    )
-    response = llm.generate_content(f"{role_instruction}\n\nUser: {user_input}\nChatbot:")
+    prompt = """You are a medical chatbot. Your purpose is to provide medical advice, answer health-related questions, 
+    and help users understand their symptoms. If the user asks questions that are not related to medical topics, 
+    politely decline to answer context data-{context_data} prev-chats-{prev_chat} current user message-{user_input}"""
+
+    print("nlp_txt-"+user_input)
+
+    loader=ArxivLoader(query=user_input,load_max_docs=5,load_all_available_meta=True)
+    docs = list(loader.lazy_load())
+    clean_docs=filter_complex_metadata(docs)
+    splitter = RecursiveCharacterTextSplitter().from_tiktoken_encoder(chunk_size=300, chunk_overlap=50)
+    splits=splitter.split_documents(clean_docs)
+    vectorstore = Chroma.from_documents(documents=splits,embedding=embeddings)
+    retriever=vectorstore.as_retriever()
+    context_docs=retriever.get_relevant_documents(user_input)
+    context_data = " ".join([doc.page_content for doc in context_docs])
+    prompt = prompt.format(context_data=context_data, prev_chat=prev_chat, user_input=user_input)
+    print(prompt)
+    response=llm.generate_content(prompt)
     cleaned_response = re.sub(r'\*\*(.*?)\*\*', r'\1',response.text.strip())
-    return cleaned_response
-
+    return cleaned_response   
 
 def send_email(request,doc_mail,meet_link):
     user = request.user
@@ -110,8 +137,8 @@ def chatbot_response(request):
         user_input = request.GET.get('user_input', '')
         conversation = request.session.get('conversation', [])
         conversation.append({'type': 'user', 'message': user_input})
-        full_context = " ".join([msg['message'] for msg in conversation])
-        response = generate_response(full_context, llm)
+        prev_chat = " ".join([msg['message'] for msg in conversation])
+        response = generate_response(prev_chat, llm, user_input)
         conversation.append({'type': 'bot', 'message': response})
         request.session['conversation'] = conversation
         return JsonResponse({"response": response})
